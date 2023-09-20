@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victim Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+
+<body>
+    <div class="wrapper">
+        <header>Login</header>
+        <form action="#" id="login-form">
+            <div class="field Case ID/Number">
+                <div class="input-area"><input type="email" placeholder="Enter email" id="email"></div>
+                <div class="error error-txt">This field can't be blank</div>
+            </div>
+            <div class="field date-range">
+                <div class="input-area"><input type="password" id="pass" name="start-date" placeholder="Enter Password"></div>
+                <div class="error error-txt">Please select a date</div>
+            </div><input type="submit" value="Submit"></form>
+    </div>
+     <script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-auth.js"></script>
+<!-- Include other Firebase services if needed -->
+<script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-firestore.js"></script>
+      <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.0/firebase-app.js";
+            import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/9.8.0/firebase-database.js";
+            import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.8.0/firebase-auth.js"
+            const firebaseConfig = {
+                apiKey: "AIzaSyDFAavgCcxf7fq-f7bQ0CWjVLHh5pbN3d4",
+                authDomain: "lawsync-a4d33.firebaseapp.com",
+                projectId: "lawsync-a4d33",
+                storageBucket: "lawsync-a4d33.appspot.com",
+                messagingSenderId: "664438047855",
+                appId: "1:664438047855:web:624086cf595b10c7f4399a",
+                measurementId: "G-KYEP7F69S5"
+            };
+            const app = initializeApp(firebaseConfig);
+
+
+            const database = getDatabase(app);
+            const auth = getAuth();
+           
+
+            var loginForm = document.getElementById('login-form');
+            console.log(loginForm)
+
+            loginForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                var email = document.getElementById('email').value;
+                var password = document.getElementById('pass').value;
+                console.log(email, password);
+                signInWithEmailAndPassword(auth,email,password).then((userCredential)=>{
+                    const user = userCredential.user;
+                    console.log(userCredential);
+                    console.log(user.email)
+                    console.log(user)
+                    
+                    const dt = new Date();
+                    update(ref(database,'Victim/'+user.uid),{
+                        last_login : dt,
+                        email:user.email
+                    })
+                    alert('User loged in!')
+                    state()
+                    window.location.href = "Session.html";
+                   
+                   
+                }).catch((error)=>{
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(errorMessage);
+                })
+               
+            });
+            const cuser = auth.currentUser;
+            localStorage.setItem('currentUser',cuser);
+
+            function state(){
+                onAuthStateChanged(auth,(user)=>{
+                    if(cuser){
+                        const id = cuser.email;
+                        localStorage.setItem('loginid',id);
+                    }else{
+                        
+                    }
+                });
+            }
+        </script>
+
+</html>
