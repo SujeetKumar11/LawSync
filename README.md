@@ -1,2 +1,2 @@
 # LawSync
- Techathon-2.0
+ Tekathon-2.0
